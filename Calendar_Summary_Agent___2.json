@@ -1,0 +1,196 @@
+{
+  "name": "Calendar Summary Agent - 2",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "Gmail API \nChange filter\n\nOpenAI API\n\nChange send summary email"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "889cf21c-484c-4169-bedf-b9ea34959c08",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "davidjfusco@gmail.com",
+          "mode": "list",
+          "cachedResultName": "davidjfusco@gmail.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        760,
+        700
+      ],
+      "id": "59134bf1-1593-4c6c-a81e-3fa97a206ece",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "zgI2zzsRNGlCsHFw",
+          "name": "Google Calendar account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "2e7a65a8-5409-4ef1-8ee1-86befb14add9",
+      "name": "Daily 7AM Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        560,
+        700
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Go through this calendar summary and identify all key details mentioned, any specific event details to look at, and calendar event details as well as who the calendar event is scheduled with.\nUse this format to output\n{\n  \"summary_of_events\": [\n    \"Point 1\",\n    \"Point 2\",\n    \"Point 3\"\n  ],\n  \"events\": [\n    {\n      \"summary\": \"Summary 1\",\n      \"dateTime \": \"Event Start DateTime 1\",\n      \"attendees\": \"Attendees email 1\",\n      \"description\": \"Description 1\"\n    },\n    {\n      \"summary\": \"Summary 2\",\n      \"dateTime \": \"Event Start DateTime 2\",\n      \"attendees\": \"Attendees email 2\",\n      \"description\": \"Description 2\"\n    },\n    {\n      \"summary\": \"Summary 3\",\n      \"dateTime \": \"Event Start DateTime 3\",\n      \"attendees\": \"Attendees email 3\",\n      \"description\": \"Description 3\"\n    }\n  ]\n}\n\nInput Data:\n\n {{ $json.data.toJsonString() }}\n\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "4c58c167-48c6-47b3-93f1-88f6585a8f66",
+      "name": "Summarize Events with OpenAI - Morning1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1200,
+        700
+      ],
+      "typeVersion": 1.7,
+      "credentials": {
+        "openAiApi": {
+          "id": "QWjcwpygg0wKur13",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "71188226-8ba5-440c-a971-cbcae5f2e524",
+      "name": "Organize Event Data",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        1000,
+        700
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sendTo": "agenticaix19@gmail.com",
+        "subject": "=ESAgent - {{ new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }}-00:00 to {{ new Date(new Date().setDate(new Date().getDate())).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }}-07:00AM",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Email Summary - isbonline@quantana.in</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            margin: 0;\n            padding: 0;\n            background-color: #f9f9f9;\n            color: #333;\n            line-height: 1.6;\n        }\n        .email-container {\n            max-width: 600px;\n            margin: 20px auto;\n            background: #ffffff;\n            border: 1px solid #ddd;\n            border-radius: 10px;\n            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n        }\n        .email-header {\n            background-color: #0073e6;\n            color: #fff;\n            padding: 20px;\n            text-align: center;\n            border-top-left-radius: 10px;\n            border-top-right-radius: 10px;\n        }\n        .email-header h1 {\n            margin: 0;\n            font-size: 24px;\n        }\n        .email-content {\n            padding: 20px;\n        }\n        .section-title {\n            font-size: 20px;\n            color: #0073e6;\n            margin-bottom: 10px;\n        }\n        ul {\n            list-style: none;\n            padding: 0;\n        }\n        ul li {\n            margin: 10px 0;\n            padding: 10px;\n            background: #f4f4f4;\n            border-left: 4px solid #0073e6;\n            border-radius: 5px;\n        }\n        .event-item {\n            font-weight: bold;\n            margin: 5px 0;\n        }\n        .event-detail {\n            margin-left: 10px;\n        }\n        .email-footer {\n            background-color: #0073e6;\n            color: #fff;\n            text-align: center;\n            padding: 10px;\n            font-size: 14px;\n            border-bottom-left-radius: 10px;\n            border-bottom-right-radius: 10px;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"email-container\">\n        <div class=\"email-header\">\n            <h1>Calendar Summary</h1>\n        </div>\n        <div class=\"email-content\">\n            <div>\n                <h2 class=\"section-title\">Summary of Events:</h2>\n                <ul>\n                    {{ $json.message.content.summary_of_events.map(email => `<li>${email}</li>`).join('') }}\n                </ul>\n            </div>\n            <div>\n                <h2 class=\"section-title\">Events:</h2>\n                <ul>\n                    {{ $json.message.content.events.map(event => `\n                        <li>\n                            <span class=\"event-item\">${event.summary}:</span>\n                            <span class=\"event-detail\">${event.dateTime}</span>\n                            <span class=\"event-detail\">${event.attendees}</span>\n                            <span class=\"event-detail\">${event.description}</span>\n                        </li>\n                    `).join('') }}\n                </ul>\n            </div>\n        </div>\n        <div class=\"email-footer\">\n            <p>Generated by Quantana ESAgent <br /> A Quantana AI Labs Initiative\n        </div>\n    </div>\n</body>\n</html>\n",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "agenticaix19@gmail.com",
+          "replyToSenderOnly": false
+        }
+      },
+      "id": "c54e3407-8923-45dc-a2b6-9e84c027d895",
+      "name": "Send Summary",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1580,
+        700
+      ],
+      "webhookId": "9516d5d5-8474-46b1-a5c2-9d62e71b516d",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "viUbzopMOKFw8eM5",
+          "name": "Gmail account 4"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "Organize Event Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 7AM Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Events with OpenAI - Morning1": {
+      "main": [
+        [
+          {
+            "node": "Send Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organize Event Data": {
+      "main": [
+        [
+          {
+            "node": "Summarize Events with OpenAI - Morning1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "380cfc17-3de0-49c2-94f3-799732d49eb1",
+  "meta": {
+    "templateId": "2722",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be5fd55217d33b8391d3288116b7e24559baf8f2ebfd2e57c79a5741965870d1"
+  },
+  "id": "Okqguk2pi83Cp52h",
+  "tags": []
+}
